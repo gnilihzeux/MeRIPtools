@@ -64,5 +64,6 @@ fisher_result <- t( mapply(.fisher_exact_test, batch_ip[,j], batch_input[,j], ov
 
 ### 改进
 
-由于该软件并没有输出检验之后的关键信息，例如 p-value/fdr 等，因此，这里我添加了更多信息 —— 查看 `callPeakFisher` 函数
+由于该软件并没有输出检验之后的关键信息，例如 p-value/fdr 等，因此，这里我添加了更多信息 
+  —— 查看 `callPeakFisher` 函数，另外相应地为 `MeRIP.peak` 类增加了一个 slot `peakCallResultMore`
 
