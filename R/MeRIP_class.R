@@ -52,6 +52,7 @@ MeRIP <- setClass("MeRIP",
 
 #' @export
 MeRIP.Peak <- setClass("MeRIP.Peak",representation( peakCallResult = "matrix",
+                                                    peakCallResultMore = "matrix",
                                                     jointPeak_id_pairs = "matrix",
                                                     jointPeaks = "data.frame",
                                                     jointPeak_ip = "matrix",
