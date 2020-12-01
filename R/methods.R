@@ -60,7 +60,7 @@ callPeakFisher <- function(MeRIP, min_counts = 15, peak_cutoff_fdr = 0.05 , peak
                fisher_exact_test_p,
                fisher_exact_test_fdr,
                fisher_exact_test_oddRatio,
-               batch_input + batch_ip
+               batch_input + batch_ip)
   }
   rm(list=ls(name=foreach:::.foreachGlobals), pos=foreach:::.foreachGlobals)
   end_time <- Sys.time()
