@@ -21,7 +21,7 @@ callPeakFisher <- function(MeRIP, min_counts = 15, peak_cutoff_fdr = 0.05 , peak
   geneBins <- geneBins(MeRIP)
 
   ## number of genes to call peaks
-  batch_id_list <- unique(geneBins$gene)
+  batch_id_list <- unique(as.character(geneBins$gene))
   num_batch_ids <- length(batch_id_list)
   cat("Calling peaks for ",num_batch_ids, "genes... \n")
   registerDoParallel( cores = threads)
@@ -30,7 +30,7 @@ callPeakFisher <- function(MeRIP, min_counts = 15, peak_cutoff_fdr = 0.05 , peak
   cat(paste("Using",getDoParWorkers(),"thread(s) to call peaks in continuous bins...\n"))
   peak_call_batches <- foreach( i = 1:num_batch_ids, .combine = rbind)%dopar%{
 
-    idx_batch <- which(geneBins$gene == batch_id_list[i])
+    idx_batch <- which(as.character(geneBins$gene) == batch_id_list[i])
     batch_input <- input[idx_batch,]
     batch_ip <- ip[idx_batch,]
     overall_input <- round( apply(batch_input, 2, median, na.rm = TRUE)  )
@@ -55,18 +55,27 @@ callPeakFisher <- function(MeRIP, min_counts = 15, peak_cutoff_fdr = 0.05 , peak
     fisher_exact_test_peak <- (fisher_exact_test_fdr < peak_cutoff_fdr &
                                  fisher_exact_test_oddRatio > peak_cutoff_oddRatio &
                                  above_thresh_counts)
-
     fisher_exact_test_peak
+    data.frame(fisher_exact_test,
+               fisher_exact_test_p,
+               fisher_exact_test_fdr,
+               fisher_exact_test_oddRatio,
+               batch_input + batch_ip
   }
   rm(list=ls(name=foreach:::.foreachGlobals), pos=foreach:::.foreachGlobals)
   end_time <- Sys.time()
   cat(paste("Time used to call peaks:",difftime(end_time, start_time, units = "mins"),"mins... \n"))
-  colnames(peak_call_batches) <- MeRIP@samplenames
+  colnames(peak_call_batches) <- c(MeRIP@samplenames,
+                                   paste0(MeRIP@samplenames, ".p"),
+                                   paste0(MeRIP@samplenames, ".fdr"),
+                                   paste0(MeRIP@samplenames, ".oddRatio"),
+                                   paste0(MeRIP@samplenames, ".totalReads"))
 
   ## output data
   data.out <- as(MeRIP,"MeRIP.Peak")
   data.out@geneBins <- geneBins
-  data.out@peakCallResult <- peak_call_batches
+  data.out@peakCallResult <- peak_call_batches[, 1:2]
+  data.out@peakCallResultMore <- peak_call_batches
   data.out@peakCalling <- "fisher's exact test"
   return(data.out)
 
