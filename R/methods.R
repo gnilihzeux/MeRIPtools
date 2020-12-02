@@ -56,11 +56,11 @@ callPeakFisher <- function(MeRIP, min_counts = 15, peak_cutoff_fdr = 0.05 , peak
                                  fisher_exact_test_oddRatio > peak_cutoff_oddRatio &
                                  above_thresh_counts)
     fisher_exact_test_peak
-    data.frame(fisher_exact_test_peak,
-               fisher_exact_test_p,
-               fisher_exact_test_fdr,
-               fisher_exact_test_oddRatio,
-               batch_input + batch_ip)
+    list(fisher_exact_test_peak,
+         fisher_exact_test_p,
+         fisher_exact_test_fdr,
+         fisher_exact_test_oddRatio,
+         batch_input + batch_ip)
   }
   rm(list=ls(name=foreach:::.foreachGlobals), pos=foreach:::.foreachGlobals)
   end_time <- Sys.time()
@@ -74,8 +74,8 @@ callPeakFisher <- function(MeRIP, min_counts = 15, peak_cutoff_fdr = 0.05 , peak
   ## output data
   data.out <- as(MeRIP,"MeRIP.Peak")
   data.out@geneBins <- geneBins
-  data.out@peakCallResult <- peak_call_batches[, 1:2]
-  data.out@peakCallResultMore <- peak_call_batches
+  data.out@peakCallResult <- peak_call_batches[[1]]
+  data.out@peakCallResultMore <- peak_call_batches[[-1]]
   data.out@peakCalling <- "fisher's exact test"
   return(data.out)
 
