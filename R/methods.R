@@ -56,7 +56,7 @@ callPeakFisher <- function(MeRIP, min_counts = 15, peak_cutoff_fdr = 0.05 , peak
                                  fisher_exact_test_oddRatio > peak_cutoff_oddRatio &
                                  above_thresh_counts)
     fisher_exact_test_peak
-    data.frame(fisher_exact_test,
+    data.frame(fisher_exact_test_peak,
                fisher_exact_test_p,
                fisher_exact_test_fdr,
                fisher_exact_test_oddRatio,
